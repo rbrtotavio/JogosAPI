@@ -7,7 +7,7 @@ namespace JogosAPI.Models
 {
     public class JogoDaVelha
     {
-        private char[,] Grid { get; set; }
+        public char[,] Grid { get; set; }
         private bool JogadorVaiPrimeiro { get; set; }
         private Random Random { get; set; }
         public JogoDaVelha()
@@ -15,6 +15,7 @@ namespace JogosAPI.Models
             Random = new();
             JogadorVaiPrimeiro = true;
             Grid = new char[3, 3];
+            InicializarGrid();
         }
         private void InicializarGrid()
         {
@@ -44,7 +45,7 @@ namespace JogosAPI.Models
                 }
                 else 
                 {
-                    return $"Coordenada {randomLinha}, {randomColuna}] já estava preenchida";
+                    return $"Coordenada [{randomLinha}, {randomColuna}] já estava preenchida";
                 }
             } while (!simboloInserido);
         }
