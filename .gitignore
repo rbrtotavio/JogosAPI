@@ -1,0 +1,58 @@
+# Arquivos de compilação
+bin/
+obj/
+
+# Arquivos temporários
+Thumbs.db
+Desktop.ini
+
+# Logs e arquivos de depuração
+*.log
+*.vscode/
+*.suo
+*.user
+*.sln.docstates
+
+# Pacotes NuGet
+*.nuget.props
+*.paket.props
+*.paket.targets
+
+# Configurações de usuário
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Diretórios específicos de Visual Studio
+_ReSharper/
+.vscode/
+.vs/
+bin/
+obj/
+
+# Pacotes do NuGet
+packages/
+*.nupkg
+# Arquivos de projeto de usuário
+*.xproj.user
+*.xproj
+*.swp
+*.*-npm-debug.*
+
+# Arquivos de log e cache do Visual Studio Code
+.vscode/*
+.vscode-test/*
+.history/*
+node_modules/*
+npm-debug.log
+package-lock.json
+yarn-error.log
+yarn-debug.log
+*.pnp.*
+.pnp.js
+
+# Pasta de publicação
+publish/
+
