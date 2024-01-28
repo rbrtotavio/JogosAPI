@@ -31,7 +31,7 @@ namespace JogosAPI.Models
         {
             bool simboloInserido = false;
 
-            do 
+            do
             {
                 int randomLinha = Random.Next(0, 3);
                 int randomColuna = Random.Next(0, 3);
@@ -39,15 +39,50 @@ namespace JogosAPI.Models
 
                 if (coordenada == ' ')
                 {
-                    Grid[randomLinha, randomColuna]= !JogadorVaiPrimeiro ? 'X' : 'O';
+                    Grid[randomLinha, randomColuna] = !JogadorVaiPrimeiro ? 'X' : 'O';
                     simboloInserido = true;
-                    return $"Simbolo inserido com sucesso em [{randomLinha}, {randomColuna}]";
+                    return $"Simbolo inserido com sucesso em [{randomLinha + 1}, {randomColuna + 1}]";
                 }
-                else 
+                else
                 {
-                    return $"Coordenada [{randomLinha}, {randomColuna}] já estava preenchida";
+                    return $"Coordenada [{randomLinha + 1}, {randomColuna + 1}] já estava preenchida";
                 }
             } while (!simboloInserido);
+        }
+
+        public string InserirSímbolo(int linha, int coluna)
+        {
+            do
+            {
+                if (!CoordenadaValida(linha, coluna))
+                {
+                    Console.WriteLine("#####################");
+                    Console.WriteLine($"Os valores da linha e da coluna devem estar entre [1] e [3]");
+                    Console.WriteLine("#####################");
+                }
+            }
+            while (!CoordenadaValida(linha, coluna));
+
+            char coordenada = Grid[linha - 1, coluna - 1];
+
+            if (coordenada == ' ')
+            {
+                Grid[linha - 1, coluna - 1] = JogadorVaiPrimeiro ? 'X' : 'O';
+                return $"Adicionado com sucecsso em [{linha}, {coluna}]";
+            }
+            else
+            {
+                return $"A coordenada ({linha}, {coluna}) já está preenchida com [{coordenada}]";
+            }
+        }
+        private static bool CoordenadaValida(int linha, int coluna)
+        {
+            return linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3;
+        }
+
+        public void AlterarOrdem()
+        {
+            JogadorVaiPrimeiro = !JogadorVaiPrimeiro;
         }
     }
 
