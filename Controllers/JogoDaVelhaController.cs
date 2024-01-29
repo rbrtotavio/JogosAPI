@@ -31,15 +31,18 @@ namespace JogosAPI.Controllers
         [HttpPost("Inserir/{linha}/{coluna}")]
         public IActionResult PostSimbolo(int linha, int coluna)
         {
+            if(linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3)
+            {
             string resposta = jogo.InserirSímbolo(linha, coluna);
             return Ok(resposta);
+            }
+            return NotFound("A linha e a coluna devem ser iguais a números de [1] a [3]");
         }
 
         [HttpPut("AlterarOrdem")]
         public IActionResult UpdateOrdem()
         {
-            jogo.AlterarOrdem();
-            return Ok("Ordem Alterada - CPU: [X] / Jogador: [O]");
+            return Ok($"Ordem Alterada - {jogo.AlterarOrdem()}");
         }
     }
 }

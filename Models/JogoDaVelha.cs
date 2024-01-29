@@ -52,17 +52,6 @@ namespace JogosAPI.Models
 
         public string InserirSímbolo(int linha, int coluna)
         {
-            do
-            {
-                if (!CoordenadaValida(linha, coluna))
-                {
-                    Console.WriteLine("#####################");
-                    Console.WriteLine($"Os valores da linha e da coluna devem estar entre [1] e [3]");
-                    Console.WriteLine("#####################");
-                }
-            }
-            while (!CoordenadaValida(linha, coluna));
-
             char coordenada = Grid[linha - 1, coluna - 1];
 
             if (coordenada == ' ')
@@ -80,9 +69,10 @@ namespace JogosAPI.Models
             return linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3;
         }
 
-        public void AlterarOrdem()
+        public string AlterarOrdem()
         {
             JogadorVaiPrimeiro = !JogadorVaiPrimeiro;
+            return JogadorVaiPrimeiro ? "CPU[O] / Jogador[X]" : "CPU[X] / Jogador[O]";
         }
     }
 
