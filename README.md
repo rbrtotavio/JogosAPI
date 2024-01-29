@@ -24,4 +24,4 @@ ou
 dotnet watch run
 ```
 
-E Pronto! O JogosAPI ao acessar [http://localhost:5252](http://localhost:5252) será possível acessar os endpoints da aplicação. 
+E Pronto! Ao acessar [http://localhost:5252](http://localhost:5252) será possível acessar os endpoints da aplicação. 
