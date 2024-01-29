@@ -21,20 +21,24 @@ namespace JogosAPI.Controllers
             return Ok(jsonGrid);
         }
 
-        [HttpPost("RandomSimbolo")]
-        public IActionResult RandomSimbolo()
-        {
-            string resposta = jogo.CPUInserirSímbolo();
-            return Ok(resposta);
-        }
-        
         [HttpPost("Inserir/{linha}/{coluna}")]
         public IActionResult PostSimbolo(int linha, int coluna)
         {
-            if(linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3)
+            if (linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3)
             {
-            string resposta = jogo.InserirSímbolo(linha, coluna);
-            return Ok(resposta);
+                if (jogo.JogadorVaiPrimeiro)
+                {
+                    string resposta = jogo.InserirSímbolo(linha, coluna);
+                    jogo.CPUInserirSímbolo();
+                    return Ok(resposta);
+                }
+                else
+                {
+                    // TODO: Lógica para o jogador conseguir olhar o jogo da CPU antes de lançar seu jogo
+                    jogo.CPUInserirSímbolo();
+                    string resposta = jogo.InserirSímbolo(linha, coluna);
+                    return Ok(resposta);
+                }
             }
             return NotFound("A linha e a coluna devem ser iguais a números de [1] a [3]");
         }
@@ -42,7 +46,7 @@ namespace JogosAPI.Controllers
         [HttpPut("AlterarOrdem")]
         public IActionResult UpdateOrdem()
         {
-            return Ok($"Ordem Alterada - {jogo.AlterarOrdem()}");
+            return Ok(jogo.AlterarOrdem());
         }
     }
 }
