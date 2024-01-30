@@ -3,15 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace JogosAPI.Models
 {
+    public enum MensagemRespostas
+    {
+        Sucesso,
+        CoordenadaJaPreencida,
+        VezDoCPU,
+        OrdemAlterada,
+        OrdemNaoAlterada,
+        GridReiniciado,
+        Vitoria,
+        Empate,
+        Derrota,
+        VezDoJogador,
+    }
     public class JogoDaVelha
     {
-        public char[,] Grid { get; set; }
+        public char[,] Grid { get; private set; }
         public bool JogadorVaiPrimeiro { get; private set; }
         private bool JogoInciado { get; set; }
         private bool VezDoCPU { get; set; }
-        private bool Empate { get; set; }
         private Random Random { get; set; }
         public JogoDaVelha()
         {
@@ -38,11 +51,11 @@ namespace JogosAPI.Models
         /// <summary>
         /// Método de inserção aleatória de símbolo por parte do CPU
         /// </summary>
-        public void CPUInserirSímbolo()
+        public MensagemRespostas CPUInserirSímbolo()
         {
             bool simboloInserido = false;
 
-            if (!Empate && VezDoCPU)
+            if (VezDoCPU)
             {
                 do
                 {
@@ -56,9 +69,21 @@ namespace JogosAPI.Models
                         simboloInserido = true;
                         JogoInciado = true;
                         VezDoCPU = false;
+
+                        char resultado = VerificarVitoria();
+                        if (Grid[randomLinha, randomColuna] == resultado)
+                        {
+                            return MensagemRespostas.Derrota;
+                        }
+                        else if (resultado == 'E')
+                        {
+                            return MensagemRespostas.Empate;
+                        }
                     }
                 } while (!simboloInserido);
             }
+
+            return MensagemRespostas.VezDoJogador;
         }
         /// <summary>
         /// Método usado para que o Jogador insira a linha e a coluna a qual ele gostaria de inserir seu símbolo.
@@ -66,7 +91,7 @@ namespace JogosAPI.Models
         /// <param name="linha"> Inteiro de 1 a 3</param>
         /// <param name="coluna">Inteiro de 1 a 3</param>
         /// <returns>Mensagem de sucesso ou falha do processo de inserção</returns>
-        public string InserirSímbolo(int linha, int coluna)
+        public MensagemRespostas InserirSímbolo(int linha, int coluna)
         {
             char coordenada = Grid[linha - 1, coluna - 1];
 
@@ -77,29 +102,39 @@ namespace JogosAPI.Models
                     Grid[linha - 1, coluna - 1] = JogadorVaiPrimeiro ? 'X' : 'O';
                     JogoInciado = true;
                     VezDoCPU = true;
-                    return $"Adicionado com sucecsso em [{linha}, {coluna}]";
+                    char resultado = VerificarVitoria();
+                    if (Grid[linha - 1, coluna - 1] == resultado)
+                    {
+                        return MensagemRespostas.Vitoria;
+                    }
+                    else if (resultado == 'E')
+                    {
+                        return MensagemRespostas.Empate;
+                    }
+                    return MensagemRespostas.Sucesso;
                 }
                 else
                 {
-                    return $"A coordenada ({linha}, {coluna}) já está preenchida com [{coordenada}]";
+                    return MensagemRespostas.CoordenadaJaPreencida;
                 }
             }
 
-            return "No momento é a vez do CPU";
+
+            return MensagemRespostas.VezDoCPU;
         }
         /// <summary>
         /// Método que altera a ordem de jogadas
         /// </summary>
         /// <returns>Mensagem referente ao sucesso ou falha da alteração</returns>
-        public string AlterarOrdem()
+        public MensagemRespostas AlterarOrdem()
         {
             if (!JogoInciado)
             {
                 JogadorVaiPrimeiro = !JogadorVaiPrimeiro;
                 VezDoCPU = !VezDoCPU;
-                return $"Ordem Alterada - {(JogadorVaiPrimeiro ? "CPU[O] / Jogador[X]" : "CPU[X] / Jogador[O]")}";
+                return MensagemRespostas.OrdemAlterada;
             }
-            return "Não é possível alterar a ordem de jogadas após o início do jogo";
+            return MensagemRespostas.OrdemNaoAlterada;
         }
         /// <summary>
         /// Método que verifica se há vitória na matriz
@@ -119,18 +154,16 @@ namespace JogosAPI.Models
 
             for (int i = 0; i < 3; i++)
             {
-                if (Grid[i, 0] == Grid[i, 1] && Grid[i, 1] == Grid[i, 2])
+                if ((Grid[i, 0] == Grid[i, 1] && Grid[i, 1] == Grid[i, 2]) ||
+                    (Grid[0, i] == Grid[1, i] && Grid[1, i] == Grid[2, i]))
                 {
                     vencedor = Grid[i, 0];
-                }
-
-                if (Grid[0, i] == Grid[1, i] && Grid[1, i] == Grid[2, i])
-                {
-                    vencedor = Grid[0, i];
+                    break;
                 }
             }
-            Empate = VerificarEmpate();
-            if (Empate) vencedor = 'E';
+
+
+            if (VerificarEmpate()) vencedor = 'E';
 
             return vencedor;
         }
@@ -151,6 +184,13 @@ namespace JogosAPI.Models
                 }
             }
             return true;
+        }
+
+        public MensagemRespostas ReiniciarGrid()
+        {
+            VezDoCPU = !JogadorVaiPrimeiro;
+            InicializarGrid();
+            return MensagemRespostas.GridReiniciado;
         }
     }
 
