@@ -10,12 +10,14 @@ namespace JogosAPI.Models
         public char[,] Grid { get; set; }
         public bool JogadorVaiPrimeiro { get; private set; }
         private bool JogoInciado { get; set; }
+        private bool VezDoCPU { get; set; }
         private bool Empate { get; set; }
         private Random Random { get; set; }
         public JogoDaVelha()
         {
             Random = new();
             JogadorVaiPrimeiro = true;
+            VezDoCPU = false;
             Grid = new char[3, 3];
             InicializarGrid();
         }
@@ -40,7 +42,7 @@ namespace JogosAPI.Models
         {
             bool simboloInserido = false;
 
-            if (!Empate)
+            if (!Empate && VezDoCPU)
             {
                 do
                 {
@@ -53,6 +55,7 @@ namespace JogosAPI.Models
                         Grid[randomLinha, randomColuna] = !JogadorVaiPrimeiro ? 'X' : 'O';
                         simboloInserido = true;
                         JogoInciado = true;
+                        VezDoCPU = false;
                     }
                 } while (!simboloInserido);
             }
@@ -67,16 +70,22 @@ namespace JogosAPI.Models
         {
             char coordenada = Grid[linha - 1, coluna - 1];
 
-            if (coordenada == ' ')
+            if (!VezDoCPU)
             {
-                Grid[linha - 1, coluna - 1] = JogadorVaiPrimeiro ? 'X' : 'O';
-                JogoInciado = true;
-                return $"Adicionado com sucecsso em [{linha}, {coluna}]";
+                if (coordenada == ' ')
+                {
+                    Grid[linha - 1, coluna - 1] = JogadorVaiPrimeiro ? 'X' : 'O';
+                    JogoInciado = true;
+                    VezDoCPU = true;
+                    return $"Adicionado com sucecsso em [{linha}, {coluna}]";
+                }
+                else
+                {
+                    return $"A coordenada ({linha}, {coluna}) já está preenchida com [{coordenada}]";
+                }
             }
-            else
-            {
-                return $"A coordenada ({linha}, {coluna}) já está preenchida com [{coordenada}]";
-            }
+
+            return "No momento é a vez do CPU";
         }
         /// <summary>
         /// Método que altera a ordem de jogadas
@@ -87,7 +96,8 @@ namespace JogosAPI.Models
             if (!JogoInciado)
             {
                 JogadorVaiPrimeiro = !JogadorVaiPrimeiro;
-                return $"Ordem Alterada - {(JogadorVaiPrimeiro ? "CPU[O] / Jogador[X]" : "CPU[X] / Jogador[O]")}"  ;
+                VezDoCPU = !VezDoCPU;
+                return $"Ordem Alterada - {(JogadorVaiPrimeiro ? "CPU[O] / Jogador[X]" : "CPU[X] / Jogador[O]")}";
             }
             return "Não é possível alterar a ordem de jogadas após o início do jogo";
         }

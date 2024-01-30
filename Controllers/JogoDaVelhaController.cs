@@ -17,6 +17,7 @@ namespace JogosAPI.Controllers
         [HttpGet("GetGrid")]
         public IActionResult GetGrid()
         {
+            jogo.CPUInserirSímbolo();
             string jsonGrid = JsonConvert.SerializeObject(jogo.Grid);
             return Ok(jsonGrid);
         }
@@ -26,19 +27,8 @@ namespace JogosAPI.Controllers
         {
             if (linha >= 1 && linha <= 3 && coluna >= 1 && coluna <= 3)
             {
-                if (jogo.JogadorVaiPrimeiro)
-                {
-                    string resposta = jogo.InserirSímbolo(linha, coluna);
-                    jogo.CPUInserirSímbolo();
-                    return Ok(resposta);
-                }
-                else
-                {
-                    // TODO: Lógica para o jogador conseguir olhar o jogo da CPU antes de lançar seu jogo
-                    jogo.CPUInserirSímbolo();
-                    string resposta = jogo.InserirSímbolo(linha, coluna);
-                    return Ok(resposta);
-                }
+                string resposta = jogo.InserirSímbolo(linha, coluna);
+                return Ok(resposta);
             }
             return NotFound("A linha e a coluna devem ser iguais a números de [1] a [3]");
         }
