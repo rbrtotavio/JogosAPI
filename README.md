@@ -2,6 +2,8 @@
 
 Bem-vindo ao JogosAPI! Este projeto está sendo desenvolvido com o intuito de aprimorar e explorar as capacidades das APIs, o contexto escolhido para fazer todo a manipualção de requisições é o contexto de jogos líricos, inicialmente o famoso Jogo da Velha.
 
+No momento estamos na versão 1.0.0.
+
 ## Como Usar
 
 Por enquanto, JogosAPI está sendo desenvolvido inteiramente em .NET Core 8 e caso seja de seu interesse executar esse projeto seria necessário apenas a instalação do SDK do [.NET 8.0](https://dotnet.microsoft.com/pt-br/download).
