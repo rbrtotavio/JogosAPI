@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace JogosAPI.Models
 {
     public enum MensagemRespostas
     {
+        EmAndamento,
         Sucesso,
         CoordenadaJaPreencida,
         VezDoCPU,
@@ -25,15 +27,23 @@ namespace JogosAPI.Models
         public bool JogadorVaiPrimeiro { get; private set; }
         private bool JogoInciado { get; set; }
         private bool VezDoCPU { get; set; }
+        public MensagemRespostas ResultadoJogo { get; private set; }
         private Random Random { get; set; }
         public JogoDaVelha()
         {
             Random = new();
+            IniciarJogo();
+        }
+
+        private void IniciarJogo()
+        {
             JogadorVaiPrimeiro = true;
             VezDoCPU = false;
             Grid = new char[3, 3];
+            ResultadoJogo = MensagemRespostas.EmAndamento;
             InicializarGrid();
         }
+
         /// <summary>
         /// Método de inicialização de uma matriz 3x3 com caracteres em branco
         /// </summary>
@@ -54,7 +64,6 @@ namespace JogosAPI.Models
         public MensagemRespostas CPUInserirSímbolo()
         {
             bool simboloInserido = false;
-
             if (VezDoCPU)
             {
                 do
@@ -73,11 +82,13 @@ namespace JogosAPI.Models
                         char resultado = VerificarVitoria();
                         if (Grid[randomLinha, randomColuna] == resultado)
                         {
-                            return MensagemRespostas.Derrota;
+                            ResultadoJogo = MensagemRespostas.Derrota;
+                            return ResultadoJogo;
                         }
                         else if (resultado == 'E')
                         {
-                            return MensagemRespostas.Empate;
+                            ResultadoJogo = MensagemRespostas.Empate;
+                            return ResultadoJogo;
                         }
                     }
                 } while (!simboloInserido);
@@ -105,11 +116,13 @@ namespace JogosAPI.Models
                     char resultado = VerificarVitoria();
                     if (Grid[linha - 1, coluna - 1] == resultado)
                     {
-                        return MensagemRespostas.Vitoria;
+                        ResultadoJogo = MensagemRespostas.Vitoria;
+                        return ResultadoJogo;
                     }
                     else if (resultado == 'E')
                     {
-                        return MensagemRespostas.Empate;
+                        ResultadoJogo = MensagemRespostas.Empate;
+                        return ResultadoJogo;
                     }
                     return MensagemRespostas.Sucesso;
                 }
@@ -118,8 +131,6 @@ namespace JogosAPI.Models
                     return MensagemRespostas.CoordenadaJaPreencida;
                 }
             }
-
-
             return MensagemRespostas.VezDoCPU;
         }
         /// <summary>
@@ -154,10 +165,14 @@ namespace JogosAPI.Models
 
             for (int i = 0; i < 3; i++)
             {
-                if ((Grid[i, 0] == Grid[i, 1] && Grid[i, 1] == Grid[i, 2]) ||
-                    (Grid[0, i] == Grid[1, i] && Grid[1, i] == Grid[2, i]))
+                if (Grid[i, 0] == Grid[i, 1] && Grid[i, 1] == Grid[i, 2])
                 {
-                    vencedor = Grid[i, 0];
+                    vencedor = Grid[i, 1];
+                    break;
+                }
+                if (Grid[0, i] == Grid[1, i] && Grid[1, i] == Grid[2, i])
+                {
+                    vencedor = Grid[1, i];
                     break;
                 }
             }
@@ -189,6 +204,7 @@ namespace JogosAPI.Models
         public MensagemRespostas ReiniciarGrid()
         {
             VezDoCPU = !JogadorVaiPrimeiro;
+            ResultadoJogo = MensagemRespostas.EmAndamento;
             InicializarGrid();
             return MensagemRespostas.GridReiniciado;
         }
