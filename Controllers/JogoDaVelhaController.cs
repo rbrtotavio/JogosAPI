@@ -14,6 +14,10 @@ namespace JogosAPI.Controllers
     {
         private static JogoDaVelha jogo = new JogoDaVelha();
 
+        /// <summary>
+        /// Endpoint responsável por retornar o grid do jogo
+        /// </summary>
+        /// <returns>StatusCode Response</returns>
         [HttpGet("GetGrid")]
         public IActionResult GetGrid()
         {
@@ -32,7 +36,12 @@ namespace JogosAPI.Controllers
                 return TratarRespostas(jogo.ResultadoJogo, jsonGrid);
             }
         }
-
+        /// <summary>
+        /// Método privado que trata os diferentes status codes da API.
+        /// </summary>
+        /// <param name="resposta"></param>
+        /// <param name="jsonGrid"></param>
+        /// <returns>StatusCode Response</returns>
         private IActionResult TratarRespostas(MensagemRespostas resposta, string jsonGrid)
         {
             return resposta switch
@@ -41,10 +50,16 @@ namespace JogosAPI.Controllers
                 MensagemRespostas.Empate => Ok(new { mensagem = "O Jogo foi um empate!! Reinicie para jogar novamente.", grid = jsonGrid }),
                 MensagemRespostas.Vitoria => Ok(new { mensagem = "Parabéns você venceu!! Reinicie para jogar novamente.", grid = jsonGrid }),
                 MensagemRespostas.VezDoJogador => Ok(new { mensagem = "Agora é sua vez, tente lançar uma jogada.", grid = jsonGrid }),
-                _ => Ok(jsonGrid)
+                _ => Ok(new{grid = jsonGrid})
             };
         }
 
+        /// <summary>
+        /// Endpoint responsável pelo fluxo de inserção da jogada do usuário
+        /// </summary>
+        /// <param name="linha">Inteiro referente a linha</param>
+        /// <param name="coluna">Inteiro referente a coluna</param>
+        /// <returns>StatusCode Response</returns>
         [HttpPost("Inserir/{linha}/{coluna}")]
         public IActionResult PostSimbolo(int linha, int coluna)
         {
@@ -60,7 +75,7 @@ namespace JogosAPI.Controllers
                         MensagemRespostas.Vitoria => Ok(new { mensagem = "Parabéns você venceu!! Reinicie para jogar novamente." }),
                         MensagemRespostas.Empate => Ok(new { mensagem = "O Jogo foi um empate!! Reinicie para jogar novamente." }),
                         MensagemRespostas.VezDoCPU => Ok(new { mensagem = $"É a vez do CPU, Verifique onde ele posicionou a jogada!" }),
-                        _ => BadRequest(resposta),
+                        _ => BadRequest("Estado de jogo não reconhecido.")
                     };
                 }
                 return NotFound(new { mensage = "A linha e a coluna devem ser iguais a números de [1] a [3]" });
@@ -76,7 +91,11 @@ namespace JogosAPI.Controllers
                 };
             }
         }
-
+        
+        /// <summary>
+        /// Endpoint responsável pela alteração da ordem de jogada
+        /// </summary>
+        /// <returns>StatusCode Response</returns>
         [HttpPut("AlterarOrdem")]
         public IActionResult UpdateOrdem()
         {
@@ -84,11 +103,15 @@ namespace JogosAPI.Controllers
             return resultado switch
             {
                 MensagemRespostas.OrdemAlterada => Ok(new { mensagem = $"Ordem alterada!" }),
-                MensagemRespostas.OrdemNaoAlterada => Ok(new { mensagem = $"Não é possivel alterar a ordem de jogadas após o início do jogo" }),
-                _ => BadRequest(resultado),
+                MensagemRespostas.OrdemNaoAlterada => BadRequest(new { mensagem = $"Não é possivel alterar a ordem de jogadas após o início do jogo" }),
+                _ => BadRequest("Estado de jogo não reconhecido."),
             };
         }
 
+        /// <summary>
+        /// Endpoint responsável pela reinicialização do grid
+        /// </summary>
+        /// <returns>StatusCode Response</returns> 
         [HttpDelete("ReiniciarGrid")]
         public IActionResult ReiniciarGrid()
         {
@@ -96,7 +119,7 @@ namespace JogosAPI.Controllers
             return resultado switch
             {
                 MensagemRespostas.GridReiniciado => Ok(new { mensagem = $"GridReiniciado" }),
-                _ => BadRequest(resultado),
+                _ => BadRequest("Estado de jogo não reconhecido."),
             };
         }
     }
